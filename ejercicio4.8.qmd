@@ -1,0 +1,124 @@
+---
+title: "Ejercicio 4.8"
+author: "Maria Àngels LLobera i Alba Linares"
+format: html
+editor: visual
+---
+
+Considera los datos europa.dat que están disponibles en Aula Digital. Los datos corresponden a los porcentajes de población empleados en diferentes actividades económicas en Europa para el año 1979. Las variables consideradas son: Agricultura, Minas, Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Finanzas, Servicios Sociales y Personales y, Transporte y Comunicaciones. Utiliza el método de componentes principales para reducir el número de variables, y tratar de determinar grupos de países con comportamientos semejantes en la distribución de su fuerza de trabajo. En este caso, usa la matriz de covarianza para el cálculo de las componentes principales, ya que todos los datos están medidos en la misma escala (porcentaje de la población) y por las caractersticas de los datos, no parece una buena idea considerarlos todos de igual manera.
+
+Importamos las librerias necesarias:
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(stringr)
+library(forcats)
+library(tidyverse)
+library(readr)
+```
+Cargamos la tabla de datos:
+
+```{r}
+datos<-read.table("europa (1).dat")
+head(datos)
+```
+Primero, calculamos la matriz de covarianza para ver si los datos estan relacionados.
+```{r}
+cov(datos)
+```
+Calculamos componentes de los datos:
+```{r}
+library(ggplot2)
+library("factoextra")
+datos.acp=prcomp(datos, scale = TRUE)
+```
+
+Estudiemos con que coponentes vamos a trabaja en el análisis posterior de estos datos.
+```{r}
+lambdas=get_eigenvalue(iris.acp)
+lambdas
+```
+Notemos que las dos primeras componentes suman mas del 60% de la varianza.
+
+```{r}
+fviz_eig(datos.acp, addlabels = TRUE, ylim=c(0,100))
+```
+
+```{r}
+fviz_pca_var(datos.acp, col.var = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE)
+```
+
+```{r}
+var <- get_pca_var(datos.acp)
+fviz_cos2(iris.acp, choice = "var", axes = 1:2)
+```
+Para ver como se relacionan las componentes principales con los datos originales, veamos los autovectores.
+```{r}
+datos.acp$rotation
+```
+La primera componente principal da bastante peso a Agricultura y da aproximadamente el mismo peso a Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Servicios Sociales y Personales y, Transporte y Comunicaciones con signo contrario a Agricultura.
+
+La segunda componente principal da aproximadamente el doble de peso a Minas que a Fábrica y da pesos parecidos a Industrias de Servicio, Finanzas, Servicios Sociales y Personales con signo contrario a Minas y las demás.
+
+```{r}
+fviz_pca_biplot(iris.acp, repel = TRUE,
+                col.var = "#2E9FDF", # color para las variables
+                col.ind = "#696969"  # color para las observaciones
+                )
+```
+
+
+
+Las flechas más largas corresponde a Agricultura, Minas y Fábrica, ya que tienen una fuerte influencia sobre la primera componente.
+
+Notemos que la direccion de la flecha de Agricultura indica que el “loading” de esta para la primera componente es positivo. De la misma forma, la direccion de la flecha de Minas indica que el “loading” de esta para la primera componente es negativo.
+
+Los “loadings” de las variables Agricultura y Comunicación con respecto a la segunda componente son muy bajos (las flechas son prácticamente horizontales)
+
+#Resultados por variables
+Veamos las contribuciones a las CP:
+```{r}
+# Resultados por Variables
+res.var=get_pca_var(datos.acp)
+res.var$contrib
+```
+
+Veamos la calidad de la representación:
+```{r}
+res.var$cos2
+```
+
+#Resultados por observaciones:
+```{r}
+res.obs=get_pca_ind(iris.acp)
+head(res.obs$coord,3)  #Coordenadas
+```
+
+Veamos las contribuciones a las CP:
+```{r}
+head(res.obs$contrib,3)
+```
+
+Veamos la calidad de la representación:
+```{r}
+head(res.obs$cos2,3)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
