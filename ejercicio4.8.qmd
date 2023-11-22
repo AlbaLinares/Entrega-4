@@ -5,10 +5,17 @@ format: html
 editor: visual
 ---
 
-Considera los datos europa.dat que están disponibles en Aula Digital. Los datos corresponden a los porcentajes de población empleados en diferentes actividades económicas en Europa para el año 1979. Las variables consideradas son: Agricultura, Minas, Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Finanzas, Servicios Sociales y Personales y, Transporte y Comunicaciones. Utiliza el método de componentes principales para reducir el número de variables, y tratar de determinar grupos de países con comportamientos semejantes en la distribución de su fuerza de trabajo. En este caso, usa la matriz de covarianza para el cálculo de las componentes principales, ya que todos los datos están medidos en la misma escala (porcentaje de la población) y por las caractersticas de los datos, no parece una buena idea considerarlos todos de igual manera.
+# Enunciado:
+Considera los datos europa.dat que están disponibles en Aula Digital. Los datos corresponden a los porcentajes de población empleados en diferentes actividades económicas en Europa para el año 1979. Las variables consideradas son: Agricultura, Minas, Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Finanzas, Servicios Sociales y Personales y, Transporte y Comunicaciones. 
 
-Importamos las librerias necesarias:
-```{r}
+Utiliza el método de componentes principales para reducir el número de variables, y tratar de determinar grupos de países con comportamientos semejantes en la distribución de su fuerza de trabajo. En este caso, usa la matriz de covarianza para el cálculo de las componentes principales, ya que todos los datos están medidos en la misma escala (porcentaje de la población) y por las caractersticas de los datos, no parece una buena idea considerarlos todos de igual manera.
+
+# Repositorio:
+El enlace al repositorio es [enlace](https://github.com/AlbaLinares/Entrega-4.git)
+
+# Resolución:
+
+```{r,warning = F,echo = F}
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -18,107 +25,189 @@ library(stringr)
 library(forcats)
 library(tidyverse)
 library(readr)
+library("factoextra")
 ```
+
 Cargamos la tabla de datos:
 
 ```{r}
 datos<-read.table("europa (1).dat")
 head(datos)
 ```
+
 Primero, calculamos la matriz de covarianza para ver si los datos estan relacionados.
+
 ```{r}
 cov(datos)
 ```
+Notemos que, en general, las variables tienen covarianza alejada de 0. Cabe destacar que la Agricultura tiene una varianza muy alta. Por tanto, calculamos las componentes principales:
+
 Calculamos componentes de los datos:
+
 ```{r}
-library(ggplot2)
-library("factoextra")
-datos.acp=prcomp(datos, scale = TRUE)
+datos.acp = prcomp(datos, scale = TRUE)
 ```
 
 Estudiemos con que coponentes vamos a trabaja en el análisis posterior de estos datos.
-```{r}
-lambdas=get_eigenvalue(iris.acp)
-lambdas
-```
-Notemos que las dos primeras componentes suman mas del 60% de la varianza.
 
 ```{r}
+datos.acp = prcomp(datos, scale = TRUE)
+lambdas=get_eigenvalue(datos.acp)
+lambdas
+```
+
+Notemos que las tres primeras componentes suman más del 60% de la varianza. 
+
+```{r, echo = F}
 fviz_eig(datos.acp, addlabels = TRUE, ylim=c(0,100))
 ```
 
-```{r}
+```{r,echo = F}
 fviz_pca_var(datos.acp, col.var = "contrib",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-             repel = TRUE)
+             repel = TRUE, addlabels = TRUE)
 ```
 
-```{r}
+Del círculo de correlación variable, podemos notar que correlaciones positivas y negativas, según su agrupación por cuadrantes, pero para ver la calidad de la representación de las variables usaremos cos2:
+
+```{r,echo = F}
 var <- get_pca_var(datos.acp)
-fviz_cos2(iris.acp, choice = "var", axes = 1:2)
+fviz_cos2(datos.acp, choice = "var", axes = 1:2)
 ```
-Para ver como se relacionan las componentes principales con los datos originales, veamos los autovectores.
+
+En este gráfico, vemos que Agr es la variable mejor representada por la componente principal. A esta le siguen Min e IS. Vemos que Ene no está perfectamente representada por la PC.
+
+Para ver como se relacionan las componentes principales con los datos originales, veamos los autovectores:
+
 ```{r}
 datos.acp$rotation
 ```
+
 La primera componente principal da bastante peso a Agricultura y da aproximadamente el mismo peso a Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Servicios Sociales y Personales y, Transporte y Comunicaciones con signo contrario a Agricultura.
 
 La segunda componente principal da aproximadamente el doble de peso a Minas que a Fábrica y da pesos parecidos a Industrias de Servicio, Finanzas, Servicios Sociales y Personales con signo contrario a Minas y las demás.
 
-```{r}
-fviz_pca_biplot(iris.acp, repel = TRUE,
+Ahora, con biplot veremos las observaciones y las variables originales transformadas (en los ejes de las PC):
+
+```{r,echo = F}
+fviz_pca_biplot(datos.acp, repel = TRUE,
                 col.var = "#2E9FDF", # color para las variables
                 col.ind = "#696969"  # color para las observaciones
                 )
 ```
 
-
-
 Las flechas más largas corresponde a Agricultura, Minas y Fábrica, ya que tienen una fuerte influencia sobre la primera componente.
 
-Notemos que la direccion de la flecha de Agricultura indica que el “loading” de esta para la primera componente es positivo. De la misma forma, la direccion de la flecha de Minas indica que el “loading” de esta para la primera componente es negativo.
+Notemos que la direccion de la flecha de Agricultura indica que el "loading" de esta para la primera componente es positivo. De la misma forma, la direccion de la flecha de Minas indica que el "loading" de esta para la primera componente es negativo.
 
-Los “loadings” de las variables Agricultura y Comunicación con respecto a la segunda componente son muy bajos (las flechas son prácticamente horizontales)
+Los "loadings" de las variables Agricultura y Comunicación con respecto a la segunda componente son muy bajos (las flechas son prácticamente horizontales)
 
-#Resultados por variables
+## Resultados por variables
+
 Veamos las contribuciones a las CP:
+
 ```{r}
 # Resultados por Variables
 res.var=get_pca_var(datos.acp)
 res.var$contrib
 ```
+En la tabla anterior, podemos confirmar lo que hemos visto en biplot.
+
 
 Veamos la calidad de la representación:
+
 ```{r}
 res.var$cos2
 ```
 
-#Resultados por observaciones:
+## Resultados por observaciones:
+
 ```{r}
-res.obs=get_pca_ind(iris.acp)
-head(res.obs$coord,3)  #Coordenadas
+res.obs=get_pca_ind(datos.acp)
+head(res.obs$coord)  #Coordenadas
 ```
 
 Veamos las contribuciones a las CP:
+
 ```{r}
-head(res.obs$contrib,3)
+head(res.obs$contrib)
 ```
 
 Veamos la calidad de la representación:
+
 ```{r}
-head(res.obs$cos2,3)
+head(res.obs$cos2)
+```
+
+## Determinación de grupos de países con comportamientos semejantes en la distribución de su fuerza de trabajo:
+
+En primer lugar, notemos que Turquía es un outlier con respecto a la distribución de su fuerza de trabajo, ya que vemos que su comportamiento es muy distinto al resto de países: es un país prácticamente agrícola i que donde no encontramos grandes explotaciones de minería. Podemos considerar que Yugoslavia se encuentra en el mismo grupo que Turquía, ya que también en comparación con el resto su economía se basa en l'agricultura y no tanto en la minería. En este grupo también añadiremos países agricultores que no explotan minas: Irlanda, Grecia, Portugal, Espana.  
+
+Un segundo grupo podría formarse a partir de los países que vemos que trabajan tanto la minería como la agricultura: Polonia, Bulgaria, Rumanía. 
+
+El siguiente grupo a considerar serían aquellos que su economía se basa en la explotación minera: Hungría, Alemania Oriental, Checoslovaquia, Unión Soviética, Austria y Luxemburgo. 
+
+En último lugar, podemos considerar un grupo formado por los países que no trabajan ni las minas: Inglaterra, Alemania Occidental, Noruega, Suiza, Italia, Finlandia, Francia, Belgica, Suecia, Holanda, Dinamarca.
+
+Agrupemoslos y veamos como queda el gráfico.
+```{r, echo = F}
+datos<-datos%>%
+  mutate(bloque = 0)
+datos$bloque[which(rownames(datos)=="Belgica")] = 4
+datos$bloque[which(rownames(datos)=="Dinamarca")] = 4
+datos$bloque[which(rownames(datos)=="Francia")] = 4
+datos$bloque[which(rownames(datos)=="Alemania Occidental")] = 4
+datos$bloque[which(rownames(datos)=="Irlanda")] = 1
+datos$bloque[which(rownames(datos)=="Italia")] = 4
+datos$bloque[which(rownames(datos)=="Luxemburgo")] = 3
+datos$bloque[which(rownames(datos)=="Holanda")] = 4
+datos$bloque[which(rownames(datos)=="Inglaterra")] = 4
+datos$bloque[which(rownames(datos)=="Austria")] = 3
+datos$bloque[which(rownames(datos)=="Finlandia")] = 4
+datos$bloque[which(rownames(datos)=="Grecia")] = 1
+datos$bloque[which(rownames(datos)=="Noruega")] = 4
+datos$bloque[which(rownames(datos)=="Portugal")] = 1
+datos$bloque[which(rownames(datos)=="Espana")] = 2
+datos$bloque[which(rownames(datos)=="Suecia")] = 4
+datos$bloque[which(rownames(datos)=="Suiza")] = 4
+datos$bloque[which(rownames(datos)=="Turquia")] = 1
+datos$bloque[which(rownames(datos)=="Bulgaria")] = 2
+datos$bloque[which(rownames(datos)=="Checoslovaquia")] = 3
+datos$bloque[which(rownames(datos)=="Alemania Oriental")] = 3
+datos$bloque[which(rownames(datos)=="Hungria")] = 3
+datos$bloque[which(rownames(datos)=="Polonia")] = 2
+datos$bloque[which(rownames(datos)=="Rumania")] = 2
+datos$bloque[which(rownames(datos)=="Union Sovietica")] = 3
+datos$bloque[which(rownames(datos)=="Yugoslavia")] = 1
+```
+
+```{r, echo = F}
+library("ggfortify")
+autoplot(datos.acp, data = datos, colour = 'bloque',
+         loadings = TRUE, loadings.colour = 'red',
+         loadings.label = TRUE, loadings.label.size = 4)
 ```
 
 
+## PCA alternativo
+Como hemos visto anteriormente, Turquía representa una gran outlier de nuestro conjunto de datos. Estudiemos si el PCA cambia si eliminamos esta observación:
 
+```{r, echo = F}
+datos_t <- datos %>% 
+  filter(rownames(datos) != "Turquia")
+datos_t
+```
+```{r,echo = F}
+datos_t.acp = prcomp(datos_t, scale = TRUE)
+```
 
-
-
-
-
-
-
-
-
-
-
+Veamos en este caso cuáles son las componentes principales:
+```{r, echo = F}
+fviz_eig(datos.acp, addlabels = TRUE, ylim=c(0,100))
+```
+De nuevo, las dos primeras componentes principales acumulan más del 60% de variabilidad
+```{r,echo = F}
+var <- get_pca_var(datos.acp)
+fviz_cos2(datos.acp, choice = "var", axes = 1:2)
+```
+Y vemos que eliminando Turquía, obtenemos las mismas componentes principales, por lo que no vamos a seguir el análisis.

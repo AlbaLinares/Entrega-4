@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Maria Àngels LLobera i Alba Linares">
+
+<title>Ejercicio 4.8</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ejercicio4.8_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ejercicio4.8_files/libs/quarto-html/quarto.js"></script>
+<script src="ejercicio4.8_files/libs/quarto-html/popper.min.js"></script>
+<script src="ejercicio4.8_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ejercicio4.8_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ejercicio4.8_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ejercicio4.8_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ejercicio4.8_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ejercicio4.8_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ejercicio4.8_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Ejercicio 4.8</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Maria Àngels LLobera i Alba Linares </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="enunciado" class="level1">
+<h1>Enunciado:</h1>
+<p>Considera los datos europa.dat que están disponibles en Aula Digital. Los datos corresponden a los porcentajes de población empleados en diferentes actividades económicas en Europa para el año 1979. Las variables consideradas son: Agricultura, Minas, Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Finanzas, Servicios Sociales y Personales y, Transporte y Comunicaciones.</p>
+<p>Utiliza el método de componentes principales para reducir el número de variables, y tratar de determinar grupos de países con comportamientos semejantes en la distribución de su fuerza de trabajo. En este caso, usa la matriz de covarianza para el cálculo de las componentes principales, ya que todos los datos están medidos en la misma escala (porcentaje de la población) y por las caractersticas de los datos, no parece una buena idea considerarlos todos de igual manera.</p>
+</section>
+<section id="repositorio" class="level1">
+<h1>Repositorio:</h1>
+<p>El enlace al repositorio es <a href="https://github.com/AlbaLinares/Entrega-4.git">enlace</a></p>
+</section>
+<section id="resolución" class="level1">
+<h1>Resolución:</h1>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ lubridate 1.9.2     ✔ readr     2.1.4
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa</code></pre>
+</div>
+</div>
+<p>Cargamos la tabla de datos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>datos<span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"europa (1).dat"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     Agr Min  Fab Ene  Con   IS Fin  SSP  TC
+Belgica              3.3 0.9 27.6 0.9  8.2 19.1 6.2 26.6 7.2
+Dinamarca            9.2 0.1 21.8 0.6  8.3 14.6 6.5 32.2 7.1
+Francia             10.8 0.8 27.5 0.9  8.9 16.8 6.0 22.6 5.7
+Alemania Occidental  6.7 1.3 35.8 0.9  7.3 14.4 5.0 22.3 6.1
+Irlanda             23.2 1.0 20.7 1.3  7.5 16.8 2.8 20.8 6.1
+Italia              15.9 0.6 27.6 0.5 10.0 18.1 1.6 20.1 5.7</code></pre>
+</div>
+</div>
+<p>Primero, calculamos la matriz de covarianza para ver si los datos estan relacionados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Agr         Min        Fab         Ene          Con          IS
+Agr 241.6958154  0.53987692 -73.113846 -2.33984615 -13.77209231 -52.4210462
+Min   0.5398769  0.94098462   3.026369  0.14796923  -0.04086154  -1.7600308
+Fab -73.1138462  3.02636923  49.108738  1.01593846   5.70227692   6.5351385
+Ene  -2.3398462  0.14796923   1.015938  0.14153846   0.03707692   0.3475385
+Con -13.7720923 -0.04086154   5.702277  0.03707692   2.70795385   2.6804769
+IS  -52.4210462 -1.76003077   6.535138  0.34753846   2.68047692  20.9329385
+Fin  -9.5920000 -1.20520000  -3.064800  0.11600000   0.07520000   4.6940000
+SSP -79.2911385 -1.86169231   7.378615  0.34021538   1.77843077  17.8786154
+TC  -12.2206769  0.21141538   3.419631  0.19643077   0.88766154   1.1940308
+        Fin         SSP          TC
+Agr -9.5920 -79.2911385 -12.2206769
+Min -1.2052  -1.8616923   0.2114154
+Fab -3.0648   7.3786154   3.4196308
+Ene  0.1160   0.3402154   0.1964308
+Con  0.0752   1.7784308   0.8876615
+IS   4.6940  17.8786154   1.1940308
+Fin  7.8768   2.0632000  -0.9604000
+SSP  2.0632  46.6426462   5.3964923
+TC  -0.9604   5.3964923   1.9361846</code></pre>
+</div>
+</div>
+<p>Notemos que, en general, las variables tienen covarianza alejada de 0. Cabe destacar que la Agricultura tiene una varianza muy alta. Por tanto, calculamos las componentes principales:</p>
+<p>Calculamos componentes de los datos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>datos.acp <span class="ot">=</span> <span class="fu">prcomp</span>(datos, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Estudiemos con que coponentes vamos a trabaja en el análisis posterior de estos datos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>datos.acp <span class="ot">=</span> <span class="fu">prcomp</span>(datos, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>lambdas<span class="ot">=</span><span class="fu">get_eigenvalue</span>(datos.acp)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>lambdas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        eigenvalue variance.percent cumulative.variance.percent
+Dim.1 3.4871512725     3.874613e+01                    38.74613
+Dim.2 2.1301731410     2.366859e+01                    62.41472
+Dim.3 1.0989576113     1.221064e+01                    74.62536
+Dim.4 0.9944829778     1.104981e+01                    85.67517
+Dim.5 0.5432177255     6.035753e+00                    91.71092
+Dim.6 0.3834276658     4.260307e+00                    95.97123
+Dim.7 0.2257540553     2.508378e+00                    98.47960
+Dim.8 0.1367899257     1.519888e+00                    99.99949
+Dim.9 0.0000456251     5.069456e-04                   100.00000</code></pre>
+</div>
+</div>
+<p>Notemos que las tres primeras componentes suman más del 60% de la varianza.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Del círculo de correlación variable, podemos notar que correlaciones positivas y negativas, según su agrupación por cuadrantes, pero para ver la calidad de la representación de las variables usaremos cos2:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>En este gráfico, vemos que Agr es la variable mejor representada por la componente principal. A esta le siguen Min e IS. Vemos que Ene no está perfectamente representada por la PC.</p>
+<p>Para ver como se relacionan las componentes principales con los datos originales, veamos los autovectores:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>datos.acp<span class="sc">$</span>rotation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             PC1         PC2         PC3         PC4        PC5        PC6
+Agr  0.523790989  0.05359389  0.04867439 -0.02879285  0.2127026  0.1533066
+Min  0.001323458  0.61780714 -0.20110021 -0.06408495 -0.1637431 -0.1005897
+Fab -0.347495131  0.35505360 -0.15046308  0.34608821 -0.3849576 -0.2881523
+Ene -0.255716182  0.26109606 -0.56108325 -0.39330897  0.2951715  0.3572641
+Con -0.325179319  0.05128845  0.15332114  0.66832395  0.4715934  0.1303542
+IS  -0.378919663 -0.35017206 -0.11509551  0.05015651 -0.2835681  0.6148287
+Fin -0.074373583 -0.45369785 -0.58736130  0.05156652  0.2795682 -0.5255581
+SSP -0.387408806 -0.22152120  0.31190350 -0.41223019 -0.2203514 -0.2629097
+TC  -0.366822713  0.20259185  0.37510601 -0.31437188  0.5129356 -0.1239760
+            PC7          PC8        PC9
+Agr  0.02132116  0.007922069 0.80641788
+Min -0.72571894  0.088362816 0.04856307
+Fab  0.47936298  0.125818308 0.36595728
+Ene  0.25564699 -0.341228167 0.01938500
+Con -0.22069499 -0.355733906 0.08257219
+IS  -0.22943536  0.387536806 0.23829861
+Fin -0.18745525  0.174329338 0.14517064
+SSP -0.19130212 -0.506154178 0.35094226
+TC   0.06819331  0.544562381 0.07205520</code></pre>
+</div>
+</div>
+<p>La primera componente principal da bastante peso a Agricultura y da aproximadamente el mismo peso a Fábricas, Suministro Eléctrico, Construcción, Industrias de Servicio, Servicios Sociales y Personales y, Transporte y Comunicaciones con signo contrario a Agricultura.</p>
+<p>La segunda componente principal da aproximadamente el doble de peso a Minas que a Fábrica y da pesos parecidos a Industrias de Servicio, Finanzas, Servicios Sociales y Personales con signo contrario a Minas y las demás.</p>
+<p>Ahora, con biplot veremos las observaciones y las variables originales transformadas (en los ejes de las PC):</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Las flechas más largas corresponde a Agricultura, Minas y Fábrica, ya que tienen una fuerte influencia sobre la primera componente.</p>
+<p>Notemos que la direccion de la flecha de Agricultura indica que el “loading” de esta para la primera componente es positivo. De la misma forma, la direccion de la flecha de Minas indica que el “loading” de esta para la primera componente es negativo.</p>
+<p>Los “loadings” de las variables Agricultura y Comunicación con respecto a la segunda componente son muy bajos (las flechas son prácticamente horizontales)</p>
+<section id="resultados-por-variables" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-por-variables">Resultados por variables</h2>
+<p>Veamos las contribuciones a las CP:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resultados por Variables</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>res.var<span class="ot">=</span><span class="fu">get_pca_var</span>(datos.acp)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>res.var<span class="sc">$</span>contrib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Dim.1      Dim.2      Dim.3       Dim.4     Dim.5     Dim.6
+Agr 2.743570e+01  0.2872306  0.2369196  0.08290281  4.524241  2.350291
+Min 1.751541e-04 38.1685658  4.0441294  0.41068811  2.681179  1.011828
+Fab 1.207529e+01 12.6063061  2.2639139 11.97770495 14.819232  8.303172
+Ene 6.539077e+00  6.8171152 31.4814413 15.46919447  8.712624 12.763766
+Con 1.057416e+01  0.2630505  2.3507371 44.66569074 22.240036  1.699221
+IS  1.435801e+01 12.2620474  1.3246976  0.25156754  8.041085 37.801432
+Fin 5.531430e-01 20.5841742 34.4993301  0.26591060  7.815837 27.621135
+SSP 1.500856e+01  4.9071643  9.7283794 16.99337296  4.855474  6.912149
+TC  1.345589e+01  4.1043458 14.0704516  9.88296781 26.310292  1.537006
+          Dim.7        Dim.8      Dim.9
+Agr  0.04545917  0.006275918 65.0309795
+Min 52.66679866  0.780798721  0.2358371
+Fab 22.97888706  1.583024654 13.3924727
+Ene  6.53553859 11.643666204  0.0375778
+Con  4.87062784 12.654661209  0.6818167
+IS   5.26405839 15.018477616  5.6786225
+Fin  3.51394718  3.039071820  2.1074515
+SSP  3.65965030 25.619205217 12.3160469
+TC   0.46503281 29.654818641  0.5191952</code></pre>
+</div>
+</div>
+<p>En la tabla anterior, podemos confirmar lo que hemos visto en biplot.</p>
+<p>Veamos la calidad de la representación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>res.var<span class="sc">$</span>cos2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Dim.1       Dim.2       Dim.3        Dim.4      Dim.5       Dim.6
+Agr 9.567244e-01 0.006118508 0.002603646 0.0008244543 0.02457648 0.009011667
+Min 6.107889e-06 0.813056538 0.044443268 0.0040842234 0.01456464 0.003879629
+Fab 4.210835e-01 0.268536147 0.024879454 0.1191162368 0.08050069 0.031836659
+Ene 2.280275e-01 0.145216356 0.345967696 0.1538385058 0.04732852 0.048939811
+Con 3.687369e-01 0.005603431 0.025833604 0.4441926914 0.12081182 0.006515282
+IS  5.006856e-01 0.261202841 0.014557865 0.0025017964 0.04368060 0.144941150
+Fin 1.928893e-02 0.438478551 0.379133014 0.0026444357 0.04245701 0.105907072
+SSP 5.233711e-01 0.104531097 0.106910765 0.1689962015 0.02637579 0.026503091
+TC  4.692272e-01 0.087429672 0.154628299 0.0982844326 0.14292217 0.005893305
+           Dim.7        Dim.8        Dim.9
+Agr 0.0001026259 8.584824e-06 2.967045e-05
+Min 0.1188974338 1.068054e-03 1.076009e-07
+Fab 0.0518757694 2.165418e-03 6.110329e-06
+Ene 0.0147542434 1.592736e-02 1.714491e-08
+Con 0.0109956399 1.731030e-02 3.110796e-07
+IS  0.0118838253 2.054376e-02 2.590877e-06
+Fin 0.0079328783 4.157144e-03 9.615269e-07
+SSP 0.0082618090 3.504449e-02 5.619209e-06
+TC  0.0010498304 4.056480e-02 2.368833e-07</code></pre>
+</div>
+</div>
+</section>
+<section id="resultados-por-observaciones" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-por-observaciones">Resultados por observaciones:</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>res.obs<span class="ot">=</span><span class="fu">get_pca_ind</span>(datos.acp)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res.obs<span class="sc">$</span>coord)  <span class="co">#Coordenadas</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         Dim.1       Dim.2      Dim.3      Dim.4       Dim.5
+Belgica             -1.6772810 -1.19806484 -0.1125361 -0.3328993 -0.31823342
+Dinamarca           -0.9343975 -2.08646480  0.9322598 -0.5824148  0.10066750
+Francia             -0.7399751 -1.09943445 -0.4882838  0.4906130 -0.29389842
+Alemania Occidental -0.8359965 -0.01115566 -0.5682728  0.1083246 -1.14259891
+Irlanda              0.1014918 -0.40594782 -0.3765899 -0.9086688  0.01492574
+Italia              -0.3681164 -0.75460329  1.0400018  1.4485444 -0.63265364
+                          Dim.6       Dim.7      Dim.8         Dim.9
+Belgica             -0.04633645 -0.33348338  0.3952085 -0.0010692294
+Dinamarca           -0.81123663 -0.29704025 -0.3450033  0.0153154655
+Francia              0.11355816 -0.18187617 -0.2610232 -0.0004975768
+Alemania Occidental -0.60609631  0.43592619  0.1907074 -0.0064123816
+Irlanda              1.39654290 -0.03632351 -0.3275521  0.0106680609
+Italia               0.98264420 -0.13902881 -0.1277496  0.0054929729</code></pre>
+</div>
+</div>
+<p>Veamos las contribuciones a las CP:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res.obs<span class="sc">$</span>contrib)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         Dim.1        Dim.2      Dim.3      Dim.4       Dim.5
+Belgica             3.10289828 2.5916263955 0.04432304 0.42860288 0.717041514
+Dinamarca           0.96298427 7.8602050074 3.04172261 1.31188018 0.071751548
+Francia             0.60393491 2.1824807807 0.83443075 0.93090954 0.611571484
+Alemania Occidental 0.77084098 0.0002246997 1.13021067 0.04538198 9.243582645
+Irlanda             0.01136104 0.2975446719 0.49634437 3.19330574 0.001577337
+Italia              0.14946040 1.0281326284 3.78541819 8.11508252 2.833901445
+                          Dim.6      Dim.7     Dim.8       Dim.9
+Belgica              0.02153717 1.89469579 4.3916235  0.09637504
+Dinamarca            6.60143433 1.50321708 3.3467178 19.77348433
+Francia              0.12935401 0.56356326 1.9157138  0.02087099
+Alemania Occidental  3.68490667 3.23755398 1.0226039  3.46626300
+Irlanda             19.56373494 0.02247846 3.0167081  9.59386870
+Italia               9.68580664 0.32930679 0.4588722  2.54353492</code></pre>
+</div>
+</div>
+<p>Veamos la calidad de la representación:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res.obs<span class="sc">$</span>cos2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          Dim.1        Dim.2       Dim.3       Dim.4
+Belgica             0.593149451 0.3026307865 0.002670154 0.023365670
+Dinamarca           0.119431052 0.5954921708 0.118885209 0.046400088
+Francia             0.224786518 0.4962204636 0.097876984 0.098813020
+Alemania Occidental 0.238284290 0.0000424304 0.110103259 0.004000742
+Irlanda             0.003217054 0.0514679089 0.044292836 0.257873846
+Italia              0.025633930 0.1077165203 0.204603508 0.396925101
+                           Dim.5        Dim.6        Dim.7       Dim.8
+Belgica             2.135227e-02 0.0004526869 0.0234477329 0.032931008
+Dinamarca           1.386221e-03 0.0900220775 0.0120693683 0.016281727
+Francia             3.545933e-02 0.0052938628 0.0135796186 0.027970104
+Alemania Occidental 4.451169e-01 0.1252477018 0.0647906604 0.012399992
+Irlanda             6.957735e-05 0.6091225209 0.0004120706 0.033508643
+Italia              7.571413e-02 0.1826575002 0.0036564069 0.003087195
+                           Dim.9
+Belgica             2.410428e-07
+Dinamarca           3.208591e-05
+Francia             1.016380e-07
+Alemania Occidental 1.401926e-05
+Irlanda             3.554406e-05
+Italia              5.707683e-06</code></pre>
+</div>
+</div>
+</section>
+<section id="determinación-de-grupos-de-países-con-comportamientos-semejantes-en-la-distribución-de-su-fuerza-de-trabajo" class="level2">
+<h2 class="anchored" data-anchor-id="determinación-de-grupos-de-países-con-comportamientos-semejantes-en-la-distribución-de-su-fuerza-de-trabajo">Determinación de grupos de países con comportamientos semejantes en la distribución de su fuerza de trabajo:</h2>
+<p>En primer lugar, notemos que Turquía es un outlier con respecto a la distribución de su fuerza de trabajo, ya que vemos que su comportamiento es muy distinto al resto de países: es un país prácticamente agrícola i que donde no encontramos grandes explotaciones de minería. Podemos considerar que Yugoslavia se encuentra en el mismo grupo que Turquía, ya que también en comparación con el resto su economía se basa en l’agricultura y no tanto en la minería. En este grupo también añadiremos países agricultores que no explotan minas: Irlanda, Grecia, Portugal, Espana.</p>
+<p>Un segundo grupo podría formarse a partir de los países que vemos que trabajan tanto la minería como la agricultura: Polonia, Bulgaria, Rumanía.</p>
+<p>El siguiente grupo a considerar serían aquellos que su economía se basa en la explotación minera: Hungría, Alemania Oriental, Checoslovaquia, Unión Soviética, Austria y Luxemburgo.</p>
+<p>En último lugar, podemos considerar un grupo formado por los países que no trabajan ni las minas: Inglaterra, Alemania Occidental, Noruega, Suiza, Italia, Finlandia, Francia, Belgica, Suecia, Holanda, Dinamarca.</p>
+<p>Agrupemoslos y veamos como queda el gráfico.</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggfortify' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="pca-alternativo" class="level2">
+<h2 class="anchored" data-anchor-id="pca-alternativo">PCA alternativo</h2>
+<p>Como hemos visto anteriormente, Turquía representa una gran outlier de nuestro conjunto de datos. Estudiemos si el PCA cambia si eliminamos esta observación:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                     Agr Min  Fab Ene  Con   IS  Fin  SSP  TC bloque
+Belgica              3.3 0.9 27.6 0.9  8.2 19.1  6.2 26.6 7.2      4
+Dinamarca            9.2 0.1 21.8 0.6  8.3 14.6  6.5 32.2 7.1      4
+Francia             10.8 0.8 27.5 0.9  8.9 16.8  6.0 22.6 5.7      4
+Alemania Occidental  6.7 1.3 35.8 0.9  7.3 14.4  5.0 22.3 6.1      4
+Irlanda             23.2 1.0 20.7 1.3  7.5 16.8  2.8 20.8 6.1      1
+Italia              15.9 0.6 27.6 0.5 10.0 18.1  1.6 20.1 5.7      4
+Luxemburgo           7.7 3.1 30.8 0.8  9.2 18.5  4.6 19.2 6.2      3
+Holanda              6.3 0.1 22.5 1.0  9.9 18.0  6.8 28.5 6.8      4
+Inglaterra           2.7 1.4 30.2 1.4  6.9 16.9  5.7 28.3 6.4      4
+Austria             12.7 1.1 30.2 1.4  9.0 16.8  4.9 16.8 7.0      3
+Finlandia           13.0 0.4 25.9 1.3  7.4 14.7  5.5 24.3 7.6      4
+Grecia              41.4 0.6 17.6 0.6  8.1 11.5  2.4 11.0 6.7      1
+Noruega              9.0 0.5 22.4 0.8  8.6 16.9  4.7 27.6 9.4      4
+Portugal            27.8 0.3 24.5 0.6  8.4 13.3  2.7 16.7 5.7      1
+Espana              22.9 0.8 28.5 0.7 11.5  9.7  8.5 11.8 5.5      2
+Suecia               6.1 0.4 25.9 0.8  7.2 14.4  6.0 32.4 6.8      4
+Suiza                7.7 0.2 37.8 0.8  9.5 17.5  5.3 15.4 5.7      4
+Bulgaria            23.6 1.9 32.3 0.6  7.9  8.0  0.7 18.2 6.7      2
+Checoslovaquia      16.5 2.9 35.5 1.2  8.7  9.2  0.9 17.9 7.0      3
+Alemania Oriental    4.2 2.9 41.2 1.3  7.6 11.2  1.2 22.1 8.4      3
+Hungria             21.7 3.1 29.6 1.9  8.2  9.4  0.9 17.2 8.0      3
+Polonia             31.1 2.5 25.7 0.9  8.4  7.5  0.9 16.1 6.9      2
+Rumania             34.7 2.1 30.1 0.6  8.7  5.9  1.3 11.7 5.0      2
+Union Sovietica     23.7 1.4 25.8 0.6  9.2  6.1  0.5 23.6 9.3      3
+Yugoslavia          48.7 1.5 16.8 1.1  4.9  6.4 11.3  5.3 4.0      1</code></pre>
+</div>
+</div>
+<p>Veamos en este caso cuáles son las componentes principales:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>De nuevo, las dos primeras componentes principales acumulan más del 60% de variabilidad</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ejercicio4.8_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Y vemos que eliminando Turquía, obtenemos las mismas componentes principales, por lo que no vamos a seguir el análisis.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
